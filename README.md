@@ -1,5 +1,5 @@
 # graph-feature-extractor
-This repository is a course project on Machine Learning course at Skoltech. 
+This repository is a course project on [Machine Learning course](http://files.skoltech.ru/data/edu/syllabuses/2018/MA06018.pdf) at [Skoltech](https://www.skoltech.ru/en/). 
 
 
 The project is a replication of [work](https://www.sciencedirect.com/science/article/pii/S0022519317305040)

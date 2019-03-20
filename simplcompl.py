@@ -127,3 +127,60 @@ def BuildAdjacencyForTriangleComplex(A, want_2=True):
                     matrix_2[numeration_dict_2[(i1, j1, k1)], numeration_dict_2[(i2, j2, k2)]] = 1
 
     return matrix_0, matrix_1, matrix_2
+
+
+def BuildAdjacencyForConventionalTriangleComplex(A, want_2=True):
+    ''' Calculates adjacency matrix for 0-simplices, adjacency matrix for 1-simplices
+    and adjacency matrix for 2-simplices for conventional triangle complex of given graph.
+
+    Args:
+        A: adjacency matrix of a given graph
+        want_2: whether or not you want to calcualte matrix_2
+
+    Returns:
+        matrix_0: adjacency matrix for 0-simplices
+        matrix_1: adjacency matrix for 1-simplices
+        matrix_2: adjacency matrix for 2-simplices
+
+    '''
+
+    n = A.shape[0]
+
+    number_1 = 0
+    number_2 = 0
+    numeration_dict_1 = {}
+    numeration_dict_2 = {}
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            for k in range(j + 1, n):
+                if A[i, j] == 1 and A[i, k] == 1 and A[j, k] == 1:
+                    numeration_dict_2[(i, j, k)] = number_2
+                    number_2 += 1
+
+            if not (i, j) in numeration_dict_1 and A[i, j] == 1:
+                numeration_dict_1[(i, j)] = number_1
+                number_1 += 1
+
+    matrix_0 = A
+    
+    matrix_1 = np.zeros((number_1, number_1))
+    for i1, j1 in numeration_dict_1.keys():
+        for i2, j2 in numeration_dict_1.keys():
+            if (i1, j1) != (i2, j2):
+                union = tuple(sorted(set((i1, j1, i2, j2))))
+                if len(union) == 3 and not union in numeration_dict_2:
+                    matrix_1[numeration_dict_1[(i1, j1)], numeration_dict_1[(i2, j2)]] = 1
+
+    if not want_2:
+        return matrix_0, matrix_1
+
+    matrix_2 = np.zeros((number_2, number_2))
+    for i1, j1, k1 in numeration_dict_2.keys():
+        for i2, j2, k2 in numeration_dict_2.keys():
+            if (i1, j1, k1) != (i2, j2, k2):
+                union = tuple(sorted(set((i1, j1, k1, i2, j2, k2))))
+                if len(union) == 4:
+                    matrix_2[numeration_dict_2[(i1, j1, k1)], numeration_dict_2[(i2, j2, k2)]] = 1
+
+    return matrix_0, matrix_1, matrix_2

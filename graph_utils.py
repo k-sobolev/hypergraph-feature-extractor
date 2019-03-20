@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 import pandas as pd
-from simplcompl import BuildAdjacencyForEdgeComplex, BuildAdjacencyForTriangleComplex
+from simplcompl import BuildAdjacencyForEdgeComplex, BuildAdjacencyForConventionalTriangleComplex
 
 def dist_abs(x):
     return 1 - np.abs(x)
@@ -71,34 +71,34 @@ def get_graph_features(A, border_value=0.3, min_graph_size=3, max_graph_size=700
         return None
 
     print(f'n_edges={n_edges}')
-    matrix_triag_0, matrix_triag_1, matrix_triag_2 = BuildAdjacencyForTriangleComplex(dist_A_binarized)
+    matrix_triag_0, matrix_triag_1, matrix_triag_2 = BuildAdjacencyForConventionalTriangleComplex(dist_A_binarized)
     matrix_edge_0, matrix_edge_1 = BuildAdjacencyForEdgeComplex(dist_A_binarized)
-    n_triag_nodes, n_triag_edges, n_edges_nodes = len(matrix_triag_1), len(matrix_triag_2), len(matrix_edge_1)
-    print(n_triag_nodes, n_triag_edges, n_edges_nodes)
+    n_3click_1simplex, n_3click_2simplex, n_2click_1simplex = len(matrix_triag_1), len(matrix_triag_2), len(matrix_edge_1)
+    print(n_3click_1simplex, n_3click_2simplex, n_2click_1simplex)
 
-    max_size = max([n_triag_nodes, n_triag_edges, n_edges_nodes])
+    max_size = max([n_3click_1simplex, n_3click_2simplex, n_2click_1simplex])
     if max_size > max_graph_size:
         print(f'max_size is {max_size}, ignored')
         return None
 
-    G_nodes_edges = nx.convert_matrix.from_numpy_array(dist_A_binarized)
-    G_triag_nodes = nx.convert_matrix.from_numpy_array(matrix_triag_1)
-    G_triag_edges = nx.convert_matrix.from_numpy_array(matrix_triag_2)
-    G_edges_nodes = nx.convert_matrix.from_numpy_array(matrix_edge_1)
+    G_initial = nx.convert_matrix.from_numpy_array(dist_A_binarized)
+    G_2click_1simplex = nx.convert_matrix.from_numpy_array(matrix_edge_1)
+    G_3click_1simplex = nx.convert_matrix.from_numpy_array(matrix_triag_1)
+    G_3click_2simplex = nx.convert_matrix.from_numpy_array(matrix_triag_2)
 
-    G_nodes_edges.name = 'nodes_edges'
-    G_edges_nodes.name = 'edges_nodes'
-    G_triag_nodes.name = 'triag_nodes'
-    G_triag_edges.name = 'triag_edges'
+    G_initial.name = 'initial'
+    G_2click_1simplex.name = 'G_2click_1simplex'
+    G_3click_1simplex.name = 'G_3click_1simplex'
+    G_3click_2simplex.name = 'G_3click_2simplex'
 
     features_dict = {
-        'n_nodes_edges': n_edges,
-        'n_triag_nodes': n_triag_nodes,
-        'n_triag_edges': n_triag_edges,
-        'n_edges_nodes': n_edges_nodes,
+        'n_edges': n_edges,
+        'n_2click_1simplex': n_2click_1simplex,
+        'n_3click_1simplex': n_3click_1simplex,
+        'n_3click_2simplex': n_3click_2simplex,
     }
 
-    graphs_list = [G_triag_nodes, G_triag_edges, G_edges_nodes, G_nodes_edges]
+    graphs_list = [G_initial, G_2click_1simplex, G_3click_1simplex, G_3click_2simplex]
     methods_list = [get_degrees, get_betweenness, get_closeness, get_clustering, get_avg_node_degree, get_global_characteristics]
 
     for graph in graphs_list:

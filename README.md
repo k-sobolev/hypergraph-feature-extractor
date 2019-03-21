@@ -12,3 +12,5 @@ Graph can be seen as a subset of the more general object named simplicial comple
 1) predicting.ipynb - file containing code for all experiments
 2) graph_utils.py - file containing wrappers for feature extraction methods
 3) simplcompl.py - file containing high level feature extraction described in the paper
+4) project_presentation.pdf - pdf with presentation of the project
+5) project_report.pdf - pdf with report of the project
